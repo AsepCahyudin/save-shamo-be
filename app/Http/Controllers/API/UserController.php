@@ -8,19 +8,21 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password as RulesPassword;
 use Laravel\Fortify\Rules\Password;
 
 class UserController extends Controller
 {
     public function register(Request $request)
     {
+
         try {
             $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'username' => ['required', 'string', 'max:255', 'unique:users'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
                 'phone' => ['nullable', 'string', 'max:255'],
-                'password' => ['required', 'string', new Password],
+                'password' => ['required', 'string', (new Password)->length(6)],
             ]);
 
             User::create([
@@ -34,7 +36,7 @@ class UserController extends Controller
             $user = User::where('email', $request->email)->first();
 
             $tokenResult = $user->createToken('authToken')->plainTextToken;
-            print_r($tokenResult);die();
+            // print_r($tokenResult);die();
 
             return ResponseFormatter::success([
                 'access_token' => $tokenResult,
