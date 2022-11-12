@@ -72,15 +72,17 @@ class TransactionController extends Controller
             'status' => $request->status,
         ]);
 
+        // echo 'transaksi id = '.$transaction->id;die();
+
         foreach ($request->items as $product) {
             TransactionItem::create([
                 'users_id' => Auth::user()->id,
                 'products_id' => $product['id'],
-                'transaction_id' => $transaction->id,
+                'transactions_id' => $transaction->id,
                 'quantity' => $product['quantity']
             ]);
         }
 
-        return ResponseFormatter::success($transaction->load('items.products'), 'Transaksi berhasil');
+        return ResponseFormatter::success($transaction->load('items.product'), 'Transaksi berhasil');
     }
 }
